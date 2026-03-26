@@ -26,3 +26,5 @@ Thumbs.db
 *.log 
 *.tmp 
 *.bak 
+u2net/*.pth 
+u2net/weights/*.pth 
