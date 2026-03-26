@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NitroSense AI - Nitrogen Estimation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.88)), 
+                        url('/static/images/wheatleaf.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+        }
+        
+        .main-card {
+            border: none;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+            margin: 20px 0;
+            border: 1px solid rgba(46, 125, 50, 0.2);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, #2e7d32 0%, #1a5f1a 100%);
+            color: white;
+            padding: 1.8rem;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .card-header h4 {
+            margin: 0;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .card-header i {
+            font-size: 2rem;
+        }
+        
+        .option-card {
+            border: 2px solid rgba(46, 125, 50, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+            height: 100%;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .option-card:hover {
+            border-color: #2e7d32;
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(46, 125, 50, 0.2);
+        }
+        
+        .option-card i {
+            font-size: 3.5rem;
+            color: #2e7d32;
+            margin-bottom: 15px;
+        }
+        
+        .option-card h5 {
+            color: #1a5f1a;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #1a5f1a;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+        
+        /* Continuous Fertilizer Input Styles */
+        .fertilizer-input-group {
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .fertilizer-input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid rgba(46, 125, 50, 0.2);
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: white;
+        }
+        
+        .fertilizer-input-group input:focus {
+            border-color: #2e7d32;
+            box-shadow: 0 0 0 0.25rem rgba(46, 125, 50, 0.25);
+            outline: none;
+        }
+        
+        .fertilizer-input-group .input-unit {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-weight: 500;
+            pointer-events: none;
+        }
+        
+        /* Temperature Input Styles */
+        .temperature-container {
+            display: flex;
+            gap: 20px;
+            margin: 15px 0;
+        }
+        
+        .temperature-field {
+            flex: 1;
+        }
+        
+        .temperature-field input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid rgba(46, 125, 50, 0.2);
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .temperature-field input:focus {
+            border-color: #2e7d32;
+            box-shadow: 0 0 0 0.25rem rgba(46, 125, 50, 0.25);
+            outline: none;
+        }
+        
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .input-unit {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-weight: 500;
+            pointer-events: none;
+        }
+        
+        /* Days Display Card */
+        .days-display-card {
+            background: linear-gradient(135deg, rgba(46, 125, 50, 0.1) 0%, rgba(26, 95, 26, 0.1) 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px dashed #2e7d32;
+            text-align: center;
+        }
+        
+        .days-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #1a5f1a;
+            line-height: 1;
+        }
+        
+        .days-label {
+            font-size: 1.1rem;
+            color: #2e7d32;
+            font-weight: 500;
+        }
+        
+        .days-range {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        /* Custom Alert */
+        .custom-alert {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            z-index: 9999;
+            max-width: 400px;
+            width: 90%;
+            border-left: 6px solid #dc3545;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+        
+        .custom-alert .alert-icon {
+            font-size: 3rem;
+            color: #dc3545;
+            margin-bottom: 15px;
+        }
+        
+        .custom-alert h4 {
+            color: #dc3545;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .custom-alert p {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .custom-alert .btn-close-alert {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .custom-alert .btn-close-alert:hover {
+            background: #bb2d3b;
+            transform: scale(1.05);
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 9998;
+            display: none;
+            backdrop-filter: blur(3px);
+        }
+        
+        .btn-estimate {
+            background: linear-gradient(135deg, #2e7d32 0%, #1a5f1a 100%);
+            color: white;
+            font-weight: 600;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.3rem;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
+        }
+        
+        .btn-estimate:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(46, 125, 50, 0.4);
+            color: white;
+        }
+        
+        .btn-estimate:disabled {
+            background: #cccccc;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        #uploadPreview {
+            margin-top: 20px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        
+        #uploadPreview img {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+            border: 3px solid #2e7d32;
+        }
+        
+        .loading-spinner {
+            color: #2e7d32;
+            width: 4rem;
+            height: 4rem;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 25px;
+            color: #1a5f1a;
+            font-weight: 500;
+            margin-top: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(46, 125, 50, 0.2);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .wheat-decoration {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #f5b041, #f1c40f, #f5b041);
+            opacity: 0.6;
+            box-shadow: 0 -2px 10px rgba(245, 176, 65, 0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .temperature-container {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .navbar-brand {
+                font-size: 1.2rem;
+            }
+            
+            .btn-estimate {
+                font-size: 1.1rem;
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom Alert Popup -->
+    <div class="overlay" id="overlay"></div>
+    <div class="custom-alert" id="daysAlert">
+        <div class="text-center">
+            <div class="alert-icon">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+            </div>
+            <h4>⚠️ Invalid Days Range</h4>
+            <p id="alertMessage">Please select dates that result in <strong>60 to 120 days</strong> after sowing for accurate nitrogen estimation.</p>
+            <p id="selectedDays" style="font-size: 1.2rem; font-weight: 600; color: #dc3545;"></p>
+            <button class="btn-close-alert" onclick="closeAlert()">OK, Got It</button>
+        </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    
+<nav class="navbar navbar-dark navbar-expand-lg" style="padding: 10px 0; background: linear-gradient(135deg, #1a5f1a 0%, #2e7d32 100%);">
+    <div class="container-fluid px-4">
+        <!-- Left side: ICAR logo - flush left -->
+        <div class="d-flex align-items-center" style="margin-right: auto;">
+            <img src="/static/images/icar.png" alt="ICAR" style="height: 70px; width: auto; max-width: 140px; object-fit: contain;">
+        </div>
+        
+        <!-- Center: NitroSense AI -->
+        <div class="position-absolute" style="left: 45%; transform: translateX(-50%);">
+            <a class="navbar-brand" href="/" style="font-size: 2.2rem; font-weight: 700; white-space: nowrap; color: white; text-decoration: none;">
+                <i class="bi bi-tree-fill"></i> NitroSense AI
+            </a>
+        </div>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="border: none;">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <!-- Navigation links -->
+            <ul class="navbar-nav ms-auto" style="gap: 0px; margin-right: 20px;">
+                <li class="nav-item">
+                    <a class="nav-link" href="/" style="color: white; font-weight: 500; padding: 8px 8px;">
+                        <i class="bi bi-house-door-fill"></i> Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/estimation" style="color: white; font-weight: 500; padding: 8px 8px;">
+                        <i class="bi bi-calculator-fill"></i> Estimation
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/about" style="color: white; font-weight: 500; padding: 8px 8px;">
+                        <i class="bi bi-info-circle-fill"></i> About
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/team" style="color: white; font-weight: 500; padding: 8px 8px;">
+                        <i class="bi bi-people-fill"></i> Team
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/how-it-works" style="color: white; font-weight: 500; padding: 8px 8px;">
+                        <i class="bi bi-gear-fill"></i> How It Works
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/contact" style="color: white; font-weight: 500; padding: 8px 8px;">
+                        <i class="bi bi-envelope-fill"></i> Contact
+                    </a>
+                </li>
+            </ul>
+            
+            <!-- Right side: IASRI logo -->
+            <div class="d-flex align-items-center">
+                <img src="/static/images/iasri.jfif" alt="IASRI" style="height: 70px; width: auto; max-width: 140px; object-fit: contain;">
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Responsive CSS for mobile -->
+<style>
+    @media (max-width: 1200px) {
+        .position-absolute {
+            left: 44% !important;
+        }
+        .navbar-brand {
+            font-size: 1.8rem !important;
+        }
+        .navbar-nav {
+            gap: 0px !important;
+        }
+        .nav-link {
+            padding: 6px 5px !important;
+            font-size: 0.85rem;
+        }
+    }
+    
+    @media (max-width: 991px) {
+        .position-absolute {
+            position: relative !important;
+            left: auto !important;
+            transform: none !important;
+            margin: 10px 0;
+            text-align: center;
+            width: 100%;
+        }
+        .navbar .container-fluid {
+            flex-wrap: wrap;
+        }
+        .navbar-nav {
+            margin: 10px 0 !important;
+            justify-content: center;
+            width: 100%;
+            gap: 2px !important;
+        }
+        .navbar-nav .nav-item {
+            text-align: center;
+        }
+        .d-flex.align-items-center {
+            margin: 5px auto !important;
+            justify-content: center;
+            width: 100%;
+        }
+        img[alt="ICAR"], img[alt="IASRI"] {
+            height: 50px !important;
+        }
+    }
+    
+    @media (min-width: 992px) {
+        .navbar-nav {
+            margin-left: auto !important;
+            margin-right: 20px !important;
+        }
+        .nav-link {
+            padding: 8px 5px !important;
+            font-size: 0.95rem;
+        }
+    }
+</style>
+
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="main-card">
+                    <div class="card-header">
+                        <h4>
+                            <i class="bi bi-cloud-sun-fill"></i>
+                            Wheat Nitrogen Content Estimation
+                        </h4>
+                        <p class="mb-0 mt-2 opacity-75">
+                            <i class="bi bi-info-circle-fill"></i> 
+                            Upload wheat leaf image and provide crop details for accurate nitrogen analysis
+                        </p>
+                    </div>
+                    <div class="card-body p-4">
+                        <form id="predictionForm" action="/predict" method="POST" enctype="multipart/form-data">
+                            <!-- Image Upload Options -->
+                            <div class="mb-4">
+                                <label class="form-label">
+                                    <i class="bi bi-images"></i> Select Image Source:
+                                </label>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="option-card" onclick="document.getElementById('imageUpload').click()">
+                                            <i class="bi bi-cloud-upload-fill"></i>
+                                            <h5>Upload Image</h5>
+                                            <p class="text-muted small">Select from your computer</p>
+                                            <input type="file" class="d-none" id="imageUpload" name="image" accept="image/*" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="option-card" onclick="window.location.href='/capture'">
+                                            <i class="bi bi-camera-fill"></i>
+                                            <h5>Take Photo</h5>
+                                            <p class="text-muted small">Use your camera</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="uploadPreview" class="text-center"></div>
+                                <!-- Hidden field to store uploaded filename -->
+                                <input type="hidden" id="uploaded_filename" name="uploaded_filename" value="">
+                            </div>
+
+                            <!-- Fertilizer Selection - Continuous Input -->
+                            <div class="mb-4">
+                                <label class="form-label">
+                                    <i class="bi bi-droplet-fill"></i> Nitrogen Fertilizer Applied (kg/ha):
+                                </label>
+                                <div class="fertilizer-input-group">
+                                    <div class="input-wrapper">
+                                        <input type="number" 
+                                               step="1" 
+                                               min="0" 
+                                               max="210" 
+                                               class="form-control form-control-lg" 
+                                               id="fertilizer" 
+                                               name="fertilizer" 
+                                               placeholder="Enter value between 0-210 kg/ha" 
+                                               required>
+                                        <span class="input-unit">kg/ha</span>
+                                    </div>
+                                </div>
+                                <small class="text-muted">Enter any nitrogen fertilizer application amount between 0 and 210 kg/ha (e.g., 45, 75, 135)</small>
+                            </div>
+
+                            <!-- Temperature Input Fields -->
+                            <div class="mb-4">
+                                <label class="form-label">
+                                    <i class="bi bi-thermometer-half"></i> Air Temperature:
+                                </label>
+                                <div class="temperature-container">
+                                    <div class="temperature-field">
+                                        <div class="input-wrapper">
+                                            <input type="number" step="0.1" min="-10" max="50" class="form-control" id="airTemp" name="airTemp" placeholder="e.g., 25.5" required>
+                                            <span class="input-unit">°C</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <small class="text-muted">Enter current air temperature in degrees Celsius (soil temperature uses mean value from training data)</small>
+                            </div>
+
+                            <!-- Date Selection -->
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label class="form-label">
+                                        <i class="bi bi-calendar-plus-fill"></i> Date of Sowing:
+                                    </label>
+                                    <input type="date" class="form-control" id="sowingDate" name="sowingDate" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">
+                                        <i class="bi bi-calendar-check-fill"></i> Date of Image Capture:
+                                    </label>
+                                    <input type="date" class="form-control" id="captureDate" name="captureDate" required>
+                                </div>
+                            </div>
+
+                            <!-- Days Display -->
+                            <div class="days-display-card" id="daysDisplay" style="display: none;">
+                                <div class="days-number" id="daysCount">0</div>
+                                <div class="days-label">Days After Sowing</div>
+                                <div class="days-range">Valid range: 60 - 120 days</div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="d-grid">
+                                <button type="button" class="btn-estimate" id="predictBtn" onclick="validateAndSubmit()">
+                                    <i class="bi bi-graph-up-arrow"></i> Estimate Nitrogen Content
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Loading Spinner -->
+                        <div id="loadingSpinner" class="text-center mt-4" style="display: none;">
+                            <div class="spinner-border loading-spinner" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-3">
+                                <strong>Processing your wheat image...</strong><br>
+                                <span class="text-muted small">This may take a few moments</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="container">
+        <div class="footer">
+            <i class="bi bi-flower1"></i> 
+            Developed at ICAR-Indian Agricultural Statistics Research Institute, New Delhi, in collaboration with ICAR-Indian Institute of Wheat and Barley Research (IIWBR), Karnal, Haryana
+            <i class="bi bi-flower1"></i>
+            <br>
+            <small class="text-muted">© 2026 NitroSense AI - ICAR-IASRI | All Rights Reserved</small>
+        </div>
+    </div>
+
+    <!-- Wheat Decoration -->
+    <div class="wheat-decoration"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Store the uploaded filename when image is uploaded
+        let uploadedFilename = '';
+        
+        // Handle file selection preview and upload
+        document.getElementById("imageUpload").addEventListener("change", function(event) {
+            var file = event.target.files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function(loadEvent) {
+                    var preview = document.getElementById("uploadPreview");
+                    preview.innerHTML = '<img src="' + loadEvent.target.result + '" class="img-fluid rounded" alt="Preview">';
+                };
+                reader.readAsDataURL(file);
+                
+                // Upload the file immediately
+                var formData = new FormData();
+                formData.append("image", file);
+                
+                fetch("/upload", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        uploadedFilename = data.filename;
+                        document.getElementById("uploaded_filename").value = data.filename;
+                        console.log("✅ File uploaded:", data.filename);
+                    } else {
+                        alert("Error uploading image: " + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error("Upload error:", error);
+                    alert("Error uploading image");
+                });
+            }
+        });
+
+        // Get fertilizer value directly from input field
+        var fertilizerInput = document.getElementById('fertilizer');
+        
+        // Set max date to today for capture date
+        var today = new Date().toISOString().split("T")[0];
+        document.getElementById("captureDate").setAttribute("max", today);
+        
+        // Set min date for sowing date
+        var minSowingDate = new Date();
+        minSowingDate.setDate(minSowingDate.getDate() - 180);
+        document.getElementById("sowingDate").setAttribute("min", minSowingDate.toISOString().split("T")[0]);
+        document.getElementById("sowingDate").setAttribute("max", today);
+
+        // Calculate days function
+        function calculateDays() {
+            var sowingDate = document.getElementById('sowingDate').value;
+            var captureDate = document.getElementById('captureDate').value;
+            
+            if (sowingDate && captureDate) {
+                var sowing = new Date(sowingDate);
+                var capture = new Date(captureDate);
+                var diffTime = capture - sowing;
+                var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                
+                if (diffDays >= 0) {
+                    document.getElementById('daysCount').textContent = diffDays;
+                    document.getElementById('daysDisplay').style.display = 'block';
+                    
+                    if (diffDays >= 60 && diffDays <= 120) {
+                        document.getElementById('daysDisplay').style.borderColor = '#2e7d32';
+                        document.getElementById('daysCount').style.color = '#1a5f1a';
+                    } else {
+                        document.getElementById('daysDisplay').style.borderColor = '#dc3545';
+                        document.getElementById('daysCount').style.color = '#dc3545';
+                    }
+                }
+            }
+        }
+
+        // Alert functions
+        function showAlert(days) {
+            document.getElementById('selectedDays').innerHTML = 'Selected: <strong>' + days + ' days</strong>';
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('daysAlert').style.display = 'block';
+        }
+
+        function closeAlert() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('daysAlert').style.display = 'none';
+        }
+
+        // Validate and submit form
+        function validateAndSubmit() {
+            var sowingDate = document.getElementById('sowingDate').value;
+            var captureDate = document.getElementById('captureDate').value;
+            var fertilizer = document.getElementById('fertilizer').value;
+            var airTemp = document.getElementById('airTemp').value;
+            var imageUpload = document.getElementById('imageUpload').files[0];
+            
+            if (!imageUpload && !uploadedFilename) {
+                alert('Please select an image first');
+                return;
+            }
+            
+            if (!fertilizer) {
+                alert('Please enter a fertilizer amount (0-210 kg/ha)');
+                return;
+            }
+            
+            // Validate fertilizer range
+            var fertilizerNum = parseFloat(fertilizer);
+            if (isNaN(fertilizerNum) || fertilizerNum < 0 || fertilizerNum > 210) {
+                alert('Fertilizer amount must be between 0 and 210 kg/ha');
+                return;
+            }
+            
+            if (!airTemp) {
+                alert('Please enter air temperature');
+                return;
+            }
+            
+            if (!sowingDate || !captureDate) {
+                alert('Please select both sowing and capture dates');
+                return;
+            }
+            
+            var sowing = new Date(sowingDate);
+            var capture = new Date(captureDate);
+            var diffTime = capture - sowing;
+            var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays < 60 || diffDays > 120) {
+                showAlert(diffDays);
+                return;
+            }
+            
+            document.getElementById("loadingSpinner").style.display = "block";
+            document.getElementById("predictBtn").disabled = true;
+            document.getElementById("predictionForm").submit();
+        }
+
+        document.getElementById('sowingDate').addEventListener('change', calculateDays);
+        document.getElementById('captureDate').addEventListener('change', calculateDays);
+    </script>
+</body>
+</html>
