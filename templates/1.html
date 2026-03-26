@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NitroSense AI - How It Works</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.88)), 
+                        url('/static/images/wheatleaf.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #1a5f1a 0%, #2e7d32 100%) !important;
+        }
+        
+        .nav-link {
+            color: white !important;
+            font-weight: 500;
+            margin: 0 10px;
+            padding: 8px 15px !important;
+            border-radius: 25px;
+        }
+        
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .content-card {
+            border: none;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            background: rgba(255, 255, 255, 0.95);
+            margin: 30px 0;
+            backdrop-filter: blur(10px);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, #2e7d32 0%, #1a5f1a 100%);
+            color: white;
+            padding: 1.5rem;
+            border: none;
+        }
+        
+        /* Flowchart Styles */
+        .flowchart-container {
+            position: relative;
+            padding: 20px 0;
+        }
+        
+        .flow-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+            position: relative;
+            width: 100%;
+        }
+        
+        .flow-box {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 2px solid #2e7d32;
+            position: relative;
+            width: 100%;
+            transition: transform 0.3s;
+        }
+        
+        .flow-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(46, 125, 50, 0.2);
+        }
+        
+        .flow-box.step1::before {
+            content: '1';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background: #2e7d32;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            border: 3px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .flow-box.step2::before {
+            content: '2';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background: #2e7d32;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            border: 3px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .flow-box.step3::before {
+            content: '3';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background: #2e7d32;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            border: 3px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .flow-box.step4::before {
+            content: '4';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background: #2e7d32;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            border: 3px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .flow-box.step5::before {
+            content: '5';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background: #2e7d32;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            border: 3px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .dual-branch-row {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+        
+        .branch-box {
+            flex: 1;
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 2px solid #2e7d32;
+            position: relative;
+            transition: transform 0.3s;
+        }
+        
+        .branch-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(46, 125, 50, 0.2);
+        }
+        
+        .branch-box.step2::before {
+            content: '2';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background: #2e7d32;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            border: 3px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .branch-box.step3::before {
+            content: '3';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background: #2e7d32;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            border: 3px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .flow-arrow {
+            position: relative;
+            width: 100%;
+            height: 40px;
+            margin: 10px 0;
+        }
+        
+        .flow-arrow::after {
+            content: '↓';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+            color: #2e7d32;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+        
+        .branch-container {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .branch {
+            flex: 1;
+            background: rgba(46, 125, 50, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid rgba(46, 125, 50, 0.3);
+        }
+        
+        .branch h5 {
+            color: #1a5f1a;
+            font-weight: 600;
+            border-bottom: 2px solid #2e7d32;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+        
+        .feature-list li::before {
+            content: '•';
+            color: #2e7d32;
+            font-weight: bold;
+            font-size: 1.5rem;
+            position: absolute;
+            left: 0;
+            top: -2px;
+        }
+        
+        .fusion-box {
+            background: linear-gradient(135deg, #2e7d32 0%, #1a5f1a 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(46, 125, 50, 0.3);
+        }
+        
+        .architecture-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            border: 2px solid rgba(46, 125, 50, 0.2);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #1a5f1a;
+            font-weight: 500;
+            margin-top: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    
+<nav class="navbar navbar-dark navbar-expand-lg" style="padding: 10px 0; background: linear-gradient(135deg, #1a5f1a 0%, #2e7d32 100%);">
+    <div class="container-fluid px-4">
+        <!-- Left side: ICAR logo - flush left -->
+        <div class="d-flex align-items-center" style="margin-right: auto;">
+            <img src="/static/images/icar.png" alt="ICAR" style="height: 70px; width: auto; max-width: 140px; object-fit: contain;">
+        </div>
+        
+        <!-- Center: NitroSense AI - slightly left of center to avoid overlap with Home button -->
+        <div class="position-absolute" style="left: 45%; transform: translateX(-50%);">
+            <a class="navbar-brand" href="/" style="font-size: 2.2rem; font-weight: 700; white-space: nowrap; color: white; text-decoration: none;">
+                <i class="bi bi-tree-fill"></i> NitroSense AI
+            </a>
+        </div>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="border: none;">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <!-- Navigation links - positioned on far right with reduced spacing -->
+            <ul class="navbar-nav ms-auto" style="gap: 0px; margin-right: 20px;">
+                <li class="nav-item">
+                    <a class="nav-link" href="/" style="color: white; font-weight: 500; padding: 8px 8px;">
+                        <i class="bi bi-house-door-fill"></i> Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/estimation" style="color: white; font-weight: 500; padding: 8px 8px;">
+                        <i class="bi bi-calculator-fill"></i> Estimation
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/about" style="color: white; font-weight: 500; padding: 8px 8px;">
+                        <i class="bi bi-info-circle-fill"></i> About
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/team" style="color: white; font-weight: 500; padding: 8px 8px;">
+                        <i class="bi bi-people-fill"></i> Team
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/how-it-works" style="color: white; font-weight: 500; padding: 8px 8px;">
+                        <i class="bi bi-gear-fill"></i> How It Works
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/contact" style="color: white; font-weight: 500; padding: 8px 8px;">
+                        <i class="bi bi-envelope-fill"></i> Contact
+                    </a>
+                </li>
+            </ul>
+            
+            <!-- Right side: IASRI logo - flush right with buttons to its left -->
+            <div class="d-flex align-items-center">
+                <img src="/static/images/iasri.jfif" alt="IASRI" style="height: 70px; width: auto; max-width: 140px; object-fit: contain;">
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Responsive CSS for mobile -->
+<style>
+    @media (max-width: 1200px) {
+        .position-absolute {
+            left: 44% !important;
+        }
+        .navbar-brand {
+            font-size: 1.8rem !important;
+        }
+        .navbar-nav {
+            gap: 0px !important;
+        }
+        .nav-link {
+            padding: 6px 5px !important;
+            font-size: 0.85rem;
+        }
+    }
+    
+    @media (max-width: 991px) {
+        .position-absolute {
+            position: relative !important;
+            left: auto !important;
+            transform: none !important;
+            margin: 10px 0;
+            text-align: center;
+            width: 100%;
+        }
+        .navbar .container-fluid {
+            flex-wrap: wrap;
+        }
+        .navbar-nav {
+            margin: 10px 0 !important;
+            justify-content: center;
+            width: 100%;
+            gap: 2px !important;
+        }
+        .navbar-nav .nav-item {
+            text-align: center;
+        }
+        .d-flex.align-items-center {
+            margin: 5px auto !important;
+            justify-content: center;
+            width: 100%;
+        }
+        img[alt="ICAR"], img[alt="IASRI"] {
+            height: 50px !important;
+        }
+    }
+    
+    @media (min-width: 992px) {
+        .navbar-nav {
+            margin-left: auto !important;
+            margin-right: 20px !important;
+        }
+        .nav-link {
+            padding: 8px 5px !important;
+            font-size: 0.95rem;
+        }
+    }
+</style>
+
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="content-card">
+                    <div class="card-header">
+                        <h2><i class="bi bi-diagram-3"></i> How NitroSense AI Works</h2>
+                        <p class="mb-0 mt-2">Multimodal Intermediate Fusion Architecture Flow</p>
+                    </div>
+                    <div class="card-body p-5">
+                        
+                        <div class="flowchart-container">
+                            
+                            <!-- Step 1: Input Layer (Single row) -->
+                            <div class="flow-row">
+                                <div class="flow-box step1">
+                                    <h4 class="text-success text-center mb-3">📥 Input Layer</h4>
+                                    <div class="branch-container">
+                                        <div class="branch">
+                                            <h5><i class="bi bi-image"></i> Image Input</h5>
+                                            <ul class="feature-list">
+                                                <li>Wheat leaf image</li>
+                                                <li>Processed through CNN Architecture</li>
+                                                <li>Input size: 224x224x3 or 299x299x3</li>
+                                            </ul>
+                                        </div>
+                                        <div class="branch">
+                                            <h5><i class="bi bi-table"></i> Tabular Input</h5>
+                                            <ul class="feature-list">
+                                                <li>Nitrogen Fertilizer Level (kg/ha)</li>
+                                                <li>Days After Sowing</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flow-arrow"></div>
+                            
+                            <!-- Step 2 & 3: Image Processing and Tabular Processing Branches (Side by Side) -->
+                            <div class="dual-branch-row">
+                                <!-- Left: Image Processing Branch -->
+                                <div class="branch-box step2">
+                                    <h4 class="text-success text-center mb-3">🖼️ Image Processing Branch</h4>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="branch">
+                                                <h5>CNN Architecture</h5>
+                                                <ul class="feature-list">
+                                                    <li>Pre-trained on ImageNet</li>
+                                                    <li>Transfer Learning</li>
+                                                    <li>Extracts hierarchical features</li>
+                                                </ul>
+                                            </div>
+                                            
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Right: Tabular Processing Branch -->
+                                <div class="branch-box step3">
+                                    <h4 class="text-success text-center mb-3">📊 Tabular Data Processing Branch</h4>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="branch">
+                                                <h5>MLP Layer Processing</h5>
+                                                <ul class="feature-list">
+                                                    <li>Extracts tabular features from agronomic data</li>
+                                                    <li>Processes Nitrogen Level and Days</li>
+                                                    <li>Feature encoding and normalization</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flow-arrow"></div>
+                            
+                            <!-- Step 4: Intermediate Fusion Layer -->
+                            <div class="flow-row">
+                                <div class="flow-box step4">
+                                    <h4 class="text-success text-center mb-3">🔄 Intermediate Fusion Layer</h4>
+                                    <div class="fusion-box text-center">
+                                        <h5 class="text-white">Image Features + Tabular Features → Combined Vector</h5>
+                                        <p class="mb-0 mt-3">✨ This fusion allows the model to learn cross-modal relationships</p>
+                                        <p class="mb-0">🔄 The network correlates visual symptoms with agronomic conditions</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flow-arrow"></div>
+                            
+                            <!-- Step 5: Prediction Network -->
+                            <div class="flow-row">
+                                <div class="flow-box step5">
+                                    <h4 class="text-success text-center mb-3">🎯 Prediction Network</h4>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="branch">
+                                                <h5>Dense Layers Processing</h5>
+                                                <ul class="feature-list">
+                                                    <li>Fused features processed through dense layers</li>
+                                                    <li>Final output layer with linear activation</li>
+                                                    <li><strong>Output:</strong> Normalized Nitrogen Content</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Model Architecture Summary -->
+                        <div class="architecture-card mt-5">
+                            <h4 class="text-success"><i class="bi bi-cpu"></i> CNN Model Architecture Summary</h4>
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <p><strong>CNN Models:</strong> ResNet50, Xception, DenseNet121, MobileNetV3, EfficientNetV2</p>
+                                    <p><strong>Loss Function:</strong> Mean Squared Error (MSE)</p>
+                                    <p><strong>Evaluation Metrics:</strong> RMSE, MAE, R²</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Input Image Size:</strong> 224x224x3 or 299×299×3</p>
+                                    <p><strong>Output:</strong> Normalized Nitrogen Content (2-5% range)</p>
+                                    <p><strong>Trainable Parameters:</strong> Varies by model</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Why Multimodal Fusion -->
+                        <div class="alert alert-success mt-4">
+                            <i class="bi bi-lightbulb-fill fs-3 me-3"></i>
+                            <div>
+                                <strong>Why Multimodal Fusion?</strong><br>
+                                By combining visual symptoms with agronomic context, the model achieves higher accuracy than either modality alone. For example, yellowing leaves might indicate deficiency, but the model also considers growth stage and fertilizer applied to make a more informed prediction.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="container">
+        <div class="footer">
+            <i class="bi bi-flower1"></i> ICAR-Indian Institute of Wheat and Barley Research (IIWBR) <i class="bi bi-flower1"></i>
+        </div>
+    </div>
+</body>
+</html>

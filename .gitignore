@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv/
+*.egg-info/
+dist/
+build/
+instance/
+.webassets-cache
+.env
+
+# Uploads
+static/uploads/*
+!static/uploads/.gitkeep
+
+# Test outputs
+test_output/
+test_output_with_weights/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.bak
+
+# Large files (DO NOT COMMIT - download on Render)
+models/*.h5
+u2net/*.pth
+u2net/weights/*.pth

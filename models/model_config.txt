@@ -1,0 +1,34 @@
+MODEL CONFIGURATION
+============================================================
+
+CUSTOM METRICS USED:
+------------------------------
+RMSE (Root Mean Square Error)
+R² (R-squared)
+MAE (Mean Absolute Error)
+
+CUSTOM ACTIVATIONS USED:
+------------------------------
+Mish Activation (mish_activation)
+Swish Activation (swish_activation)
+
+INPUTS:
+------------------------------
+Input 1: image_input
+  Shape: (None, 224, 224, 3)
+  Dtype: float32
+
+Input 2: tabular_input
+  Shape: (None, 4)
+  Dtype: float32
+
+OUTPUTS:
+------------------------------
+Single Output: keras_tensor_3050
+  Shape: (None, 1)
+
+METRICS:
+------------------------------
+• loss
+• compile_metrics
+

@@ -1,0 +1,38 @@
+FROM python:3.9-slim
+
+# Install system dependencies for OpenCV
+RUN apt-get update && apt-get install -y \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    wget \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Git LFS
+RUN apt-get update && apt-get install -y git-lfs && git lfs install
+
+# Create a non-root user
+RUN useradd -m -u 1000 user
+USER user
+ENV PATH="/home/user/.local/bin:$PATH"
+
+WORKDIR /app
+
+# Copy requirements first (better caching)
+COPY --chown=user requirements.txt .
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
+
+# Copy the rest of the application
+COPY --chown=user . .
+
+# Create necessary directories
+RUN mkdir -p static/uploads u2net/weights models
+
+# Pull Git LFS files (U2Net weights)
+RUN git lfs pull || true
+
+# Expose the port
+EXPOSE 7860
+
+# Run the app
+CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:7860"]
