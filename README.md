@@ -1,2 +1,2 @@
 # NitroSense-AI
-Nitrogen estimation in wheat leaves using multimodal deep learning
+AI-powered web application for real-time nitrogen estimation in wheat crops using multimodal deep learning
