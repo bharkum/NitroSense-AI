@@ -28,4 +28,4 @@ Thumbs.db
 *.bak 
 u2net/*.pth 
 u2net/weights/*.pth 
-models/*.h5 
+
